@@ -40,6 +40,7 @@ type MemberDraft = {
   id: string;
   name: string;
   gender: Gender;
+  familyRank: string;
   birthDate: string;
   alive: boolean;
   notes: string;
@@ -66,6 +67,7 @@ type PersonNodeData = {
   isCenter: boolean;
   alive: boolean;
   gender: Gender;
+  familyRank?: number;
 };
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
@@ -109,7 +111,12 @@ function normalizeState(raw: Partial<AppState> | null): AppState {
 
   const familySet = new Set(families.map((f) => f.id));
   const members = Array.isArray(raw.members)
-    ? raw.members.filter((m) => m && m.id && m.familyId && familySet.has(m.familyId))
+    ? raw.members
+        .filter((m) => m && m.id && m.familyId && familySet.has(m.familyId))
+        .map((m) => ({
+          ...m,
+          familyRank: normalizeFamilyRank((m as { familyRank?: unknown }).familyRank),
+        }))
     : [];
 
   const memberSet = new Set(members.map((m) => m.id));
@@ -190,6 +197,7 @@ function emptyMemberDraft(): MemberDraft {
     id: "",
     name: "",
     gender: "male",
+    familyRank: "",
     birthDate: "",
     alive: true,
     notes: "",
@@ -199,6 +207,21 @@ function emptyMemberDraft(): MemberDraft {
     bindTargetId: "",
     bindType: "none",
   };
+}
+
+function normalizeFamilyRank(value: unknown): number | undefined {
+  if (typeof value === "number" && Number.isFinite(value) && value >= 1) {
+    return Math.floor(value);
+  }
+  if (typeof value === "string") {
+    const parsed = Number.parseInt(value.trim(), 10);
+    if (Number.isFinite(parsed) && parsed >= 1) return parsed;
+  }
+  return undefined;
+}
+
+function memberRankValue(member: Pick<Member, "familyRank">): number {
+  return normalizeFamilyRank(member.familyRank) ?? Number.POSITIVE_INFINITY;
 }
 
 function avatarRingClass(gender: Gender) {
@@ -226,7 +249,14 @@ function PersonNode({ data }: NodeProps<PersonNodeData>) {
           className={`h-10 w-10 rounded-full border object-cover ${avatarRingClass(data.gender)}`}
         />
         <div className="min-w-0">
-          <p className={`truncate text-sm font-semibold ${textClass}`}>{data.name}</p>
+          <p className={`truncate text-sm font-semibold ${textClass}`}>
+            {data.name}
+            {data.familyRank ? (
+              <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-orange-100 px-1 text-[11px] text-orange-700">
+                {data.familyRank}
+              </span>
+            ) : null}
+          </p>
           <p className={`truncate text-xs ${subTextClass}`}>{data.alive ? "在世" : "已故"}</p>
         </div>
       </div>
@@ -411,7 +441,12 @@ export default function App() {
       }
     }
 
-    disconnected.sort((a, b) => a.name.localeCompare(b.name, "zh-CN"));
+    disconnected.sort(
+      (a, b) =>
+        memberRankValue(a) - memberRankValue(b) ||
+        (a.birthDate || "9999-12-31").localeCompare(b.birthDate || "9999-12-31") ||
+        a.name.localeCompare(b.name, "zh-CN")
+    );
 
     const levelKeys = [...grouped.keys()].sort((a, b) => a - b);
     const minLevel = levelKeys.length ? Math.min(...levelKeys) : 0;
@@ -427,6 +462,7 @@ export default function App() {
       members: Member[];
       familyKey: string;
       anchor: number | null;
+      sortRank: number;
       sortBirth: string;
       sortName: string;
     };
@@ -437,6 +473,7 @@ export default function App() {
         .slice()
         .sort(
           (a, b) =>
+            memberRankValue(a) - memberRankValue(b) ||
             (a.birthDate || "9999-12-31").localeCompare(b.birthDate || "9999-12-31") ||
             a.name.localeCompare(b.name, "zh-CN")
         );
@@ -485,6 +522,7 @@ export default function App() {
           members,
           familyKey,
           anchor,
+          sortRank: memberRankValue(lineage),
           sortBirth: lineage.birthDate || "9999-12-31",
           sortName: lineage.name,
         });
@@ -501,17 +539,25 @@ export default function App() {
       }
 
       const groups = [...groupedUnits.entries()].map(([familyKey, familyUnits]) => {
-        familyUnits.sort((a, b) => a.sortBirth.localeCompare(b.sortBirth) || a.sortName.localeCompare(b.sortName, "zh-CN"));
+        familyUnits.sort(
+          (a, b) => a.sortRank - b.sortRank || a.sortBirth.localeCompare(b.sortBirth) || a.sortName.localeCompare(b.sortName, "zh-CN")
+        );
         const anchors = familyUnits.map((u) => u.anchor).filter((v): v is number => v !== null);
         const anchor = anchors.length ? anchors.reduce((sum, x) => sum + x, 0) / anchors.length : null;
-        return { familyKey, units: familyUnits, anchor, seedName: familyUnits[0]?.sortName ?? "" };
+        return {
+          familyKey,
+          units: familyUnits,
+          anchor,
+          seedRank: familyUnits[0]?.sortRank ?? Number.POSITIVE_INFINITY,
+          seedName: familyUnits[0]?.sortName ?? "",
+        };
       });
 
       groups.sort((a, b) => {
         if (a.anchor !== null && b.anchor !== null) return a.anchor - b.anchor;
         if (a.anchor !== null) return -1;
         if (b.anchor !== null) return 1;
-        return a.seedName.localeCompare(b.seedName, "zh-CN");
+        return a.seedRank - b.seedRank || a.seedName.localeCompare(b.seedName, "zh-CN");
       });
 
       const xMap = new Map<string, number>();
@@ -584,6 +630,7 @@ export default function App() {
             isCenter: member.id === centerMemberId,
             alive: member.alive,
             gender: member.gender,
+            familyRank: member.familyRank,
           },
         });
       });
@@ -607,6 +654,7 @@ export default function App() {
             isCenter: false,
             alive: member.alive,
             gender: member.gender,
+            familyRank: member.familyRank,
           },
         });
       });
@@ -662,6 +710,12 @@ export default function App() {
       window.alert("请输入成员姓名");
       return;
     }
+    const rawRank = memberDraft.familyRank.trim();
+    const familyRank = normalizeFamilyRank(rawRank);
+    if (rawRank && familyRank === undefined) {
+      window.alert("家族排名请填写大于等于 1 的整数");
+      return;
+    }
 
     if (!activeFamilyId) return;
 
@@ -680,6 +734,7 @@ export default function App() {
                 ...m,
                 name,
                 gender: memberDraft.gender,
+                familyRank,
                 birthDate: memberDraft.birthDate || undefined,
                 alive: memberDraft.alive,
                 notes: memberDraft.notes.trim() || undefined,
@@ -693,6 +748,7 @@ export default function App() {
           familyId: activeFamilyId,
           name,
           gender: memberDraft.gender,
+          familyRank,
           birthDate: memberDraft.birthDate || undefined,
           alive: memberDraft.alive,
           notes: memberDraft.notes.trim() || undefined,
@@ -775,6 +831,7 @@ export default function App() {
       id: m.id,
       name: m.name,
       gender: m.gender,
+      familyRank: m.familyRank ? String(m.familyRank) : "",
       birthDate: m.birthDate || "",
       alive: m.alive,
       notes: m.notes || "",
@@ -1133,6 +1190,18 @@ export default function App() {
                 </select>
               </label>
               <label className="text-sm text-amber-800">
+                家族排名（1=老大）
+                <input
+                  type="number"
+                  min={1}
+                  step={1}
+                  value={memberDraft.familyRank}
+                  onChange={(e) => setMemberDraft((prev) => ({ ...prev, familyRank: e.target.value }))}
+                  placeholder="例如：1"
+                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                />
+              </label>
+              <label className="text-sm text-amber-800">
                 出生日期
                 <input
                   type="date"
@@ -1263,7 +1332,12 @@ export default function App() {
               {activeMembers.length ? (
                 activeMembers
                   .slice()
-                  .sort((a, b) => a.name.localeCompare(b.name, "zh-CN"))
+                  .sort(
+                    (a, b) =>
+                      memberRankValue(a) - memberRankValue(b) ||
+                      (a.birthDate || "9999-12-31").localeCompare(b.birthDate || "9999-12-31") ||
+                      a.name.localeCompare(b.name, "zh-CN")
+                  )
                   .map((member) => (
                     <div
                       key={member.id}
@@ -1279,6 +1353,11 @@ export default function App() {
                       <div className="min-w-[140px] flex-1">
                         <p className={`m-0 text-sm font-semibold ${member.alive ? "text-amber-900" : "text-slate-700"}`}>
                           {member.name}
+                          {member.familyRank ? (
+                            <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-orange-100 px-1 text-[11px] text-orange-700">
+                              {member.familyRank}
+                            </span>
+                          ) : null}
                           {member.id === centerMemberId ? "（中心）" : ""}
                         </p>
                         <p className={`m-0 text-xs ${member.alive ? "text-amber-700" : "text-slate-600"}`}>

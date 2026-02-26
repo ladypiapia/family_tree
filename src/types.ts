@@ -11,6 +11,7 @@ export type Member = {
   familyId: string;
   name: string;
   gender: Gender;
+  familyRank?: number;
   birthDate?: string;
   alive: boolean;
   avatar?: string;
