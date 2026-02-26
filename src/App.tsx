@@ -530,11 +530,13 @@ export default function App() {
           const isCouple =
             unit.members.length === 2 && spousePairSet.has(pairKey(unit.members[0].id, unit.members[1].id));
           const unitHalf = isCouple ? coupleOffset + nodeHalf : nodeHalf;
+          const desiredCenter = unit.anchor ?? (i === 0 ? group.anchor : null);
 
-          let center = 0;
+          let center = desiredCenter ?? 0;
           if (previousCenter !== null) {
             const extraGap = i === 0 ? groupGap : 0;
-            center = previousCenter + previousHalf + unitHalf + unitGap + extraGap;
+            const minCenter = previousCenter + previousHalf + unitHalf + unitGap + extraGap;
+            center = desiredCenter === null ? minCenter : Math.max(minCenter, desiredCenter);
           }
 
           if (isCouple) {
@@ -623,7 +625,7 @@ export default function App() {
           ...base,
           style: { stroke: "#c9732f", strokeWidth: 2.2 },
           markerEnd: { type: MarkerType.ArrowClosed, color: "#c9732f" },
-          type: "smoothstep",
+          type: "default",
         };
       }
 
