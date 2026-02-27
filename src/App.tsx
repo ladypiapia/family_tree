@@ -23,6 +23,8 @@ import {
   Search,
   House,
   HeartHandshake,
+  Maximize2,
+  Minimize2,
 } from "lucide-react";
 import type { AppState, Family, Gender, Member, Relationship, RelationshipType } from "./types";
 import { loadState, saveState } from "./lib/storage";
@@ -276,6 +278,7 @@ export default function App() {
   const [state, setState] = useState<AppState>(createInitialState());
   const [loaded, setLoaded] = useState(false);
   const [activeTab, setActiveTab] = useState<TabKey>("home");
+  const [isGraphFullscreen, setIsGraphFullscreen] = useState(false);
 
   const [familyName, setFamilyName] = useState("");
   const [memberDraft, setMemberDraft] = useState<MemberDraft>(emptyMemberDraft());
@@ -285,6 +288,7 @@ export default function App() {
   const [queryTo, setQueryTo] = useState("");
   const [overrideTitle, setOverrideTitle] = useState("");
   const importRef = useRef<HTMLInputElement>(null);
+  const graphViewportRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let alive = true;
@@ -302,6 +306,17 @@ export default function App() {
     if (!loaded) return;
     void saveState(state);
   }, [loaded, state]);
+
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      setIsGraphFullscreen(document.fullscreenElement === graphViewportRef.current);
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    onFullscreenChange();
+    return () => {
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+    };
+  }, []);
 
   const activeFamily = useMemo(
     () => state.families.find((f) => f.id === state.activeFamilyId) ?? state.families[0],
@@ -1045,6 +1060,23 @@ export default function App() {
     setOverrideTitle("");
   }
 
+  async function toggleGraphFullscreen() {
+    const container = graphViewportRef.current;
+    if (!container) return;
+    try {
+      if (document.fullscreenElement === container) {
+        await document.exitFullscreen();
+        return;
+      }
+      if (document.fullscreenElement && document.fullscreenElement !== container) {
+        await document.exitFullscreen();
+      }
+      await container.requestFullscreen();
+    } catch {
+      window.alert("切换全屏失败，请检查浏览器权限");
+    }
+  }
+
   const tabs: Array<{ key: TabKey; label: string }> = [
     { key: "home", label: "首页图谱" },
     { key: "family", label: "家族管理" },
@@ -1552,8 +1584,23 @@ export default function App() {
               <h2 className="m-0 text-lg font-semibold text-blue-700">族谱可视化（可拖拽/缩放）</h2>
               <p className="m-0 mt-1 text-sm text-slate-600">点击任意节点可切换中心视角并自动刷新称呼标注。</p>
             </div>
+            <button
+              type="button"
+              onClick={() => {
+                void toggleGraphFullscreen();
+              }}
+              className="inline-flex items-center gap-2 rounded-xl border border-blue-300 bg-white px-3 py-2 text-sm text-blue-700"
+            >
+              {isGraphFullscreen ? <Minimize2 size={16} /> : <Maximize2 size={16} />}
+              {isGraphFullscreen ? "退出全屏" : "全屏展示"}
+            </button>
           </div>
-          <div className="h-[62vh] min-h-[420px] overflow-hidden rounded-2xl border border-slate-200">
+          <div
+            ref={graphViewportRef}
+            className={`overflow-hidden rounded-2xl border border-slate-200 bg-white ${
+              isGraphFullscreen ? "h-screen min-h-0" : "h-[62vh] min-h-[420px]"
+            }`}
+          >
             <ReactFlow
               nodes={graphData.nodes}
               edges={graphData.edges}
