@@ -189,7 +189,7 @@ function defaultAvatar(gender: Gender): string {
   if (gender === "female") {
     return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Crect width='100%25' height='100%25' fill='%23fce7f3'/%3E%3Ccircle cx='36' cy='26' r='12' fill='%23db2777'/%3E%3Crect x='18' y='40' width='36' height='20' rx='10' fill='%23db2777'/%3E%3C/svg%3E";
   }
-  return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Crect width='100%25' height='100%25' fill='%23f3e8dc'/%3E%3Ccircle cx='36' cy='26' r='12' fill='%237f6249'/%3E%3Crect x='18' y='40' width='36' height='20' rx='10' fill='%237f6249'/%3E%3C/svg%3E";
+  return "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='72' height='72'%3E%3Crect width='100%25' height='100%25' fill='%23e2e8f0'/%3E%3Ccircle cx='36' cy='26' r='12' fill='%23475569'/%3E%3Crect x='18' y='40' width='36' height='20' rx='10' fill='%23475569'/%3E%3C/svg%3E";
 }
 
 function emptyMemberDraft(): MemberDraft {
@@ -227,21 +227,21 @@ function memberRankValue(member: Pick<Member, "familyRank">): number {
 function avatarRingClass(gender: Gender) {
   if (gender === "male") return "border-blue-300 bg-blue-50";
   if (gender === "female") return "border-pink-300 bg-pink-50";
-  return "border-amber-200 bg-amber-50";
+  return "border-slate-300 bg-slate-50";
 }
 
 function PersonNode({ data }: NodeProps<PersonNodeData>) {
   const cardClass = !data.alive
     ? "border-slate-300 bg-slate-100"
     : data.isCenter
-      ? "border-pine-500 bg-emerald-50"
-      : "border-orange-200 bg-white";
-  const textClass = data.alive ? "text-amber-900" : "text-slate-700";
-  const subTextClass = data.alive ? "text-amber-700" : "text-slate-600";
+      ? "border-blue-500 bg-blue-50"
+      : "border-slate-200 bg-white";
+  const textClass = data.alive ? "text-slate-900" : "text-slate-700";
+  const subTextClass = data.alive ? "text-slate-600" : "text-slate-600";
 
   return (
     <div className={`w-[220px] max-w-[220px] rounded-2xl border px-3 py-2 shadow-card ${cardClass}`}>
-      <Handle type="target" position={Position.Top} className="!h-2 !w-2 !border-0 !bg-orange-400" />
+      <Handle type="target" position={Position.Top} className="!h-2 !w-2 !border-0 !bg-blue-500" />
       <div className="flex items-center gap-2">
         <img
           src={data.avatar}
@@ -252,7 +252,7 @@ function PersonNode({ data }: NodeProps<PersonNodeData>) {
           <p className={`truncate text-sm font-semibold ${textClass}`}>
             {data.name}
             {data.familyRank ? (
-              <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-orange-100 px-1 text-[11px] text-orange-700">
+              <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-slate-100 px-1 text-[11px] text-blue-700">
                 {data.familyRank}
               </span>
             ) : null}
@@ -262,12 +262,12 @@ function PersonNode({ data }: NodeProps<PersonNodeData>) {
       </div>
       <p
         className={`mt-2 truncate whitespace-nowrap rounded-lg px-2 py-1 text-xs ${
-          data.alive ? "bg-amber-50 text-amber-700" : "bg-slate-200 text-slate-700"
+          data.alive ? "bg-slate-50 text-slate-600" : "bg-slate-200 text-slate-700"
         }`}
       >
         {data.relationTitle}
       </p>
-      <Handle type="source" position={Position.Bottom} className="!h-2 !w-2 !border-0 !bg-orange-400" />
+      <Handle type="source" position={Position.Bottom} className="!h-2 !w-2 !border-0 !bg-blue-500" />
     </div>
   );
 }
@@ -671,8 +671,8 @@ export default function App() {
       if (rel.type === "parent") {
         return {
           ...base,
-          style: { stroke: "#c9732f", strokeWidth: 2.2 },
-          markerEnd: { type: MarkerType.ArrowClosed, color: "#c9732f" },
+          style: { stroke: "#2563eb", strokeWidth: 2.2 },
+          markerEnd: { type: MarkerType.ArrowClosed, color: "#2563eb" },
           type: "default",
         };
       }
@@ -680,14 +680,14 @@ export default function App() {
       if (rel.type === "spouse") {
         return {
           ...base,
-          style: { stroke: "#167a6e", strokeWidth: 2, strokeDasharray: "5 4" },
+          style: { stroke: "#0891b2", strokeWidth: 2, strokeDasharray: "5 4" },
           type: "straight",
         };
       }
 
       return {
         ...base,
-        style: { stroke: "#d97706", strokeWidth: 2, strokeDasharray: "4 3" },
+        style: { stroke: "#6366f1", strokeWidth: 2, strokeDasharray: "4 3" },
         type: "straight",
       };
     });
@@ -1054,25 +1054,25 @@ export default function App() {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-warm-50 via-amber-50 to-orange-100 px-3 pb-8 pt-4 md:px-6">
+    <div className="min-h-screen bg-gradient-to-b from-slate-50 via-gray-50 to-slate-100 px-3 pb-8 pt-4 md:px-6">
       <div className="mx-auto flex w-full max-w-7xl flex-col gap-4">
-        <header className="rounded-2xl border border-orange-200 bg-white/85 p-4 shadow-card backdrop-blur">
+        <header className="rounded-2xl border border-slate-200 bg-white/85 p-4 shadow-card backdrop-blur">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div>
-              <h1 className="m-0 text-2xl font-bold text-warm-700">家族族谱助手</h1>
-              <p className="mt-1 text-sm text-amber-700">移动端优先 · 本地存储 · 多家族管理</p>
+              <h1 className="m-0 text-2xl font-bold text-blue-700">家族族谱助手</h1>
+              <p className="mt-1 text-sm text-slate-600">移动端优先 · 本地存储 · 多家族管理</p>
             </div>
             <div className="flex flex-wrap gap-2">
               <button
                 onClick={exportJson}
-                className="inline-flex items-center gap-2 rounded-xl bg-pine-500 px-3 py-2 text-sm font-medium text-white"
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white"
                 type="button"
               >
                 <Download size={16} /> 导出 JSON
               </button>
               <button
                 onClick={() => importRef.current?.click()}
-                className="inline-flex items-center gap-2 rounded-xl border border-pine-500 bg-white px-3 py-2 text-sm font-medium text-pine-700"
+                className="inline-flex items-center gap-2 rounded-xl border border-blue-500 bg-white px-3 py-2 text-sm font-medium text-blue-700"
                 type="button"
               >
                 <Upload size={16} /> 导入 JSON
@@ -1090,7 +1090,7 @@ export default function App() {
             </div>
           </div>
         </header>
-        <nav className="rounded-2xl border border-orange-200 bg-white p-2 shadow-card">
+        <nav className="rounded-2xl border border-slate-200 bg-white p-2 shadow-card">
           <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
             {tabs.map((tab) => (
               <button
@@ -1099,8 +1099,8 @@ export default function App() {
                 onClick={() => setActiveTab(tab.key)}
                 className={`rounded-xl px-3 py-2 text-sm font-medium transition ${
                   activeTab === tab.key
-                    ? "bg-pine-500 text-white"
-                    : "border border-orange-200 bg-amber-50 text-amber-800 hover:bg-orange-100"
+                    ? "bg-blue-600 text-white"
+                    : "border border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100"
                 }`}
               >
                 {tab.label}
@@ -1110,17 +1110,17 @@ export default function App() {
         </nav>
 
         {activeTab === "family" ? (
-        <section className="rounded-2xl border border-orange-200 bg-white p-4 shadow-card">
-          <div className="mb-3 flex items-center gap-2 text-warm-700">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
+          <div className="mb-3 flex items-center gap-2 text-blue-700">
             <House size={18} />
             <h2 className="m-0 text-lg font-semibold">家族管理</h2>
           </div>
           <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
             <div className="grid gap-2 md:grid-cols-[1fr_1fr]">
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 当前家族
                 <select
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                   value={activeFamilyId}
                   onChange={(e) => setState((prev) => ({ ...prev, activeFamilyId: e.target.value }))}
                 >
@@ -1131,19 +1131,19 @@ export default function App() {
                   ))}
                 </select>
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 新建家族
                 <div className="mt-1 flex gap-2">
                   <input
                     value={familyName}
                     onChange={(e) => setFamilyName(e.target.value)}
                     placeholder="例如：女朋友家族"
-                    className="w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                    className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                   />
                   <button
                     type="button"
                     onClick={addFamily}
-                    className="rounded-xl bg-warm-500 px-3 py-2 font-medium text-white"
+                    className="rounded-xl bg-blue-600 px-3 py-2 font-medium text-white"
                   >
                     <Plus size={16} />
                   </button>
@@ -1162,34 +1162,34 @@ export default function App() {
         ) : null}
 
         {activeTab === "member" ? (
-          <section className="rounded-2xl border border-orange-200 bg-white p-4 shadow-card">
-            <div className="mb-3 flex items-center gap-2 text-warm-700">
+          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
+            <div className="mb-3 flex items-center gap-2 text-blue-700">
               <UserPlus size={18} />
               <h2 className="m-0 text-lg font-semibold">成员管理</h2>
             </div>
             <div className="grid gap-3 md:grid-cols-2">
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 姓名
                 <input
                   value={memberDraft.name}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, name: e.target.value }))}
                   placeholder="输入姓名"
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 />
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 性别
                 <select
                   value={memberDraft.gender}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, gender: e.target.value as Gender }))}
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   <option value="male">男</option>
                   <option value="female">女</option>
                   <option value="other">其他</option>
                 </select>
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 家族排名（1=老大）
                 <input
                   type="number"
@@ -1198,40 +1198,40 @@ export default function App() {
                   value={memberDraft.familyRank}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, familyRank: e.target.value }))}
                   placeholder="例如：1"
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 />
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 出生日期
                 <input
                   type="date"
                   value={memberDraft.birthDate}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, birthDate: e.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 />
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 状态
                 <select
                   value={memberDraft.alive ? "alive" : "deceased"}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, alive: e.target.value === "alive" }))}
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   <option value="alive">在世</option>
                   <option value="deceased">已故</option>
                 </select>
               </label>
-              <label className="text-sm text-amber-800 md:col-span-2">
+              <label className="text-sm text-slate-700 md:col-span-2">
                 备注
                 <textarea
                   rows={2}
                   value={memberDraft.notes}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, notes: e.target.value }))}
                   placeholder="可选"
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 />
               </label>
-              <label className="text-sm text-amber-800 md:col-span-2">
+              <label className="text-sm text-slate-700 md:col-span-2">
                 头像（JPG/PNG/WebP，≤ 5MB）
                 <input
                   type="file"
@@ -1240,31 +1240,31 @@ export default function App() {
                     void handleAvatarUpload(e.target.files?.[0] ?? null);
                     e.currentTarget.value = "";
                   }}
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 />
                 {memberDraft.avatar ? (
                   <img
                     src={memberDraft.avatar}
                     alt="avatar preview"
-                    className="mt-2 h-14 w-14 rounded-full border border-orange-200 object-cover"
+                    className="mt-2 h-14 w-14 rounded-full border border-slate-200 object-cover"
                   />
                 ) : null}
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 自定义称呼（可选）
                 <input
                   value={memberDraft.customTitle}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, customTitle: e.target.value }))}
                   placeholder="例如：姥姥、幺姨"
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 />
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 称呼视角（谁来称呼 TA）
                 <select
                   value={memberDraft.customTitleFromId}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, customTitleFromId: e.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   <option value="">当前中心成员</option>
                   {activeMembers.map((m) => (
@@ -1274,12 +1274,12 @@ export default function App() {
                   ))}
                 </select>
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 添加时绑定到成员
                 <select
                   value={memberDraft.bindTargetId}
                   onChange={(e) => setMemberDraft((prev) => ({ ...prev, bindTargetId: e.target.value }))}
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   <option value="">不绑定</option>
                   {activeMembers.map((m) => (
@@ -1289,7 +1289,7 @@ export default function App() {
                   ))}
                 </select>
               </label>
-              <label className="text-sm text-amber-800">
+              <label className="text-sm text-slate-700">
                 绑定关系
                 <select
                   value={memberDraft.bindType}
@@ -1299,7 +1299,7 @@ export default function App() {
                       bindType: e.target.value as MemberDraft["bindType"],
                     }))
                   }
-                  className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   <option value="none">不创建关系</option>
                   <option value="parent_of_target">Ta 的父/母</option>
@@ -1314,7 +1314,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={upsertMember}
-                className="inline-flex items-center gap-2 rounded-xl bg-warm-500 px-4 py-2 font-medium text-white"
+                className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 font-medium text-white"
               >
                 {memberDraft.id ? <Pencil size={16} /> : <Plus size={16} />}
                 {memberDraft.id ? "更新成员" : "保存成员"}
@@ -1322,7 +1322,7 @@ export default function App() {
               <button
                 type="button"
                 onClick={() => setMemberDraft(emptyMemberDraft())}
-                className="rounded-xl border border-orange-300 bg-orange-50 px-4 py-2 text-amber-800"
+                className="rounded-xl border border-slate-300 bg-slate-100 px-4 py-2 text-slate-700"
               >
                 重置
               </button>
@@ -1342,7 +1342,7 @@ export default function App() {
                     <div
                       key={member.id}
                       className={`flex flex-wrap items-center gap-2 rounded-xl border p-2 ${
-                        member.alive ? "border-orange-100 bg-amber-50" : "border-slate-300 bg-slate-100"
+                        member.alive ? "border-slate-200 bg-slate-50" : "border-slate-300 bg-slate-100"
                       }`}
                     >
                       <img
@@ -1351,23 +1351,23 @@ export default function App() {
                         className={`h-10 w-10 rounded-full border object-cover ${avatarRingClass(member.gender)}`}
                       />
                       <div className="min-w-[140px] flex-1">
-                        <p className={`m-0 text-sm font-semibold ${member.alive ? "text-amber-900" : "text-slate-700"}`}>
+                        <p className={`m-0 text-sm font-semibold ${member.alive ? "text-slate-900" : "text-slate-700"}`}>
                           {member.name}
                           {member.familyRank ? (
-                            <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-orange-100 px-1 text-[11px] text-orange-700">
+                            <span className="ml-1 inline-flex min-w-5 items-center justify-center rounded-full bg-slate-100 px-1 text-[11px] text-blue-700">
                               {member.familyRank}
                             </span>
                           ) : null}
                           {member.id === centerMemberId ? "（中心）" : ""}
                         </p>
-                        <p className={`m-0 text-xs ${member.alive ? "text-amber-700" : "text-slate-600"}`}>
+                        <p className={`m-0 text-xs ${member.alive ? "text-slate-600" : "text-slate-600"}`}>
                           {member.gender === "male" ? "男" : member.gender === "female" ? "女" : "其他"} ·
                           {member.alive ? " 在世" : " 已故"}
                         </p>
                       </div>
                       <button
                         type="button"
-                        className="rounded-lg border border-teal-300 bg-white px-2 py-1 text-xs text-teal-700"
+                        className="rounded-lg border border-blue-300 bg-white px-2 py-1 text-xs text-blue-700"
                         onClick={() =>
                           setState((prev) => ({
                             ...prev,
@@ -1382,7 +1382,7 @@ export default function App() {
                       </button>
                       <button
                         type="button"
-                        className="rounded-lg border border-orange-300 bg-white px-2 py-1 text-xs text-amber-700"
+                        className="rounded-lg border border-slate-300 bg-white px-2 py-1 text-xs text-slate-600"
                         onClick={() => editMember(member.id)}
                       >
                         编辑
@@ -1397,15 +1397,15 @@ export default function App() {
                     </div>
                   ))
               ) : (
-                <p className="text-sm text-amber-700">当前家族还没有成员。</p>
+                <p className="text-sm text-slate-600">当前家族还没有成员。</p>
               )}
             </div>
           </section>
         ) : null}
 
         {activeTab === "relation" ? (
-          <section className="rounded-2xl border border-orange-200 bg-white p-4 shadow-card">
-              <div className="mb-3 flex items-center gap-2 text-warm-700">
+          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
+              <div className="mb-3 flex items-center gap-2 text-blue-700">
                 <GitBranch size={18} />
                 <h2 className="m-0 text-lg font-semibold">关系管理</h2>
               </div>
@@ -1414,7 +1414,7 @@ export default function App() {
                 <select
                   value={relationDraft.aId}
                   onChange={(e) => setRelationDraft((prev) => ({ ...prev, aId: e.target.value }))}
-                  className="w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   <option value="">成员 A</option>
                   {activeMembers.map((m) => (
@@ -1431,7 +1431,7 @@ export default function App() {
                       type: e.target.value as RelationshipType,
                     }))
                   }
-                  className="w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   <option value="parent">A 是 B 的父/母</option>
                   <option value="spouse">A 与 B 是配偶/伴侣</option>
@@ -1440,7 +1440,7 @@ export default function App() {
                 <select
                   value={relationDraft.bId}
                   onChange={(e) => setRelationDraft((prev) => ({ ...prev, bId: e.target.value }))}
-                  className="w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   <option value="">成员 B</option>
                   {activeMembers.map((m) => (
@@ -1452,7 +1452,7 @@ export default function App() {
                 <button
                   type="button"
                   onClick={addRelationship}
-                  className="rounded-xl bg-pine-500 px-3 py-2 font-medium text-white"
+                  className="rounded-xl bg-blue-600 px-3 py-2 font-medium text-white"
                 >
                   新增关系
                 </button>
@@ -1463,9 +1463,9 @@ export default function App() {
                   activeRelationships.map((rel) => (
                     <div
                       key={rel.id}
-                      className="flex items-center justify-between gap-2 rounded-xl border border-orange-100 bg-amber-50 px-2 py-2"
+                      className="flex items-center justify-between gap-2 rounded-xl border border-slate-200 bg-slate-50 px-2 py-2"
                     >
-                      <p className="m-0 text-xs text-amber-800">{relationshipLabel(rel, activeMemberMap)}</p>
+                      <p className="m-0 text-xs text-slate-700">{relationshipLabel(rel, activeMemberMap)}</p>
                       <button
                         type="button"
                         onClick={() => deleteRelationship(rel.id)}
@@ -1476,15 +1476,15 @@ export default function App() {
                     </div>
                   ))
                 ) : (
-                  <p className="text-sm text-amber-700">暂无关系。</p>
+                  <p className="text-sm text-slate-600">暂无关系。</p>
                 )}
               </div>
           </section>
         ) : null}
 
         {activeTab === "query" ? (
-          <section className="rounded-2xl border border-orange-200 bg-white p-4 shadow-card">
-              <div className="mb-3 flex items-center gap-2 text-warm-700">
+          <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
+              <div className="mb-3 flex items-center gap-2 text-blue-700">
                 <Search size={18} />
                 <h2 className="m-0 text-lg font-semibold">称呼查询器</h2>
               </div>
@@ -1492,7 +1492,7 @@ export default function App() {
                 <select
                   value={queryFrom}
                   onChange={(e) => setQueryFrom(e.target.value)}
-                  className="w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   {activeMembers.map((m) => (
                     <option value={m.id} key={`qf-${m.id}`}>
@@ -1503,7 +1503,7 @@ export default function App() {
                 <select
                   value={queryTo}
                   onChange={(e) => setQueryTo(e.target.value)}
-                  className="w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                  className="w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                 >
                   {activeMembers.map((m) => (
                     <option value={m.id} key={`qt-${m.id}`}>
@@ -1511,17 +1511,17 @@ export default function App() {
                     </option>
                   ))}
                 </select>
-                <div className="rounded-xl border border-orange-200 bg-orange-50 p-3">
-                  <p className="m-0 text-sm text-amber-900">建议称呼：{queryResult.title}</p>
-                  {queryResult.mode ? <p className="m-0 mt-1 text-xs text-amber-700">来源：{queryResult.mode}</p> : null}
-                  <p className="m-0 mt-1 text-xs text-amber-700">关系路径：{queryResult.pathText}</p>
+                <div className="rounded-xl border border-slate-200 bg-slate-100 p-3">
+                  <p className="m-0 text-sm text-slate-900">建议称呼：{queryResult.title}</p>
+                  {queryResult.mode ? <p className="m-0 mt-1 text-xs text-slate-600">来源：{queryResult.mode}</p> : null}
+                  <p className="m-0 mt-1 text-xs text-slate-600">关系路径：{queryResult.pathText}</p>
                 </div>
-                <label className="text-sm text-amber-800">
+                <label className="text-sm text-slate-700">
                   自定义称呼（覆盖当前方向）
                   <input
                     value={overrideTitle}
                     onChange={(e) => setOverrideTitle(e.target.value)}
-                    className="mt-1 w-full rounded-xl border border-orange-200 bg-amber-50 px-3 py-2"
+                    className="mt-1 w-full rounded-xl border border-slate-200 bg-slate-50 px-3 py-2"
                     placeholder="例如：二姨夫"
                   />
                 </label>
@@ -1529,7 +1529,7 @@ export default function App() {
                   <button
                     onClick={saveOverride}
                     type="button"
-                    className="inline-flex items-center gap-2 rounded-xl bg-warm-500 px-3 py-2 text-sm font-medium text-white"
+                    className="inline-flex items-center gap-2 rounded-xl bg-blue-600 px-3 py-2 text-sm font-medium text-white"
                   >
                     <HeartHandshake size={16} /> 保存覆盖
                   </button>
@@ -1546,14 +1546,14 @@ export default function App() {
         ) : null}
 
         {activeTab === "home" ? (
-        <section className="rounded-2xl border border-orange-200 bg-white p-4 shadow-card">
+        <section className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
           <div className="mb-2 flex items-center justify-between gap-2">
             <div>
-              <h2 className="m-0 text-lg font-semibold text-warm-700">族谱可视化（可拖拽/缩放）</h2>
-              <p className="m-0 mt-1 text-sm text-amber-700">点击任意节点可切换中心视角并自动刷新称呼标注。</p>
+              <h2 className="m-0 text-lg font-semibold text-blue-700">族谱可视化（可拖拽/缩放）</h2>
+              <p className="m-0 mt-1 text-sm text-slate-600">点击任意节点可切换中心视角并自动刷新称呼标注。</p>
             </div>
           </div>
-          <div className="h-[62vh] min-h-[420px] overflow-hidden rounded-2xl border border-orange-200">
+          <div className="h-[62vh] min-h-[420px] overflow-hidden rounded-2xl border border-slate-200">
             <ReactFlow
               nodes={graphData.nodes}
               edges={graphData.edges}
@@ -1576,18 +1576,18 @@ export default function App() {
                 }));
               }}
             >
-              <Background gap={16} color="#f2d9bd" />
+              <Background gap={16} color="#dbe4f0" />
               <MiniMap
                 pannable
                 zoomable
                 nodeStrokeWidth={2}
                 nodeColor={(node) => {
                   const data = node.data as PersonNodeData | undefined;
-                  if (!data) return "#f8d9b5";
+                  if (!data) return "#bfdbfe";
                   if (!data.alive) return "#d1d5db";
                   if (data.gender === "male") return "#93c5fd";
                   if (data.gender === "female") return "#f9a8d4";
-                  return "#f8d9b5";
+                  return "#bfdbfe";
                 }}
               />
               <Controls />

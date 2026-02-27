@@ -6,19 +6,19 @@ const config: Config = {
     extend: {
       colors: {
         warm: {
-          50: "#fff8ef",
-          100: "#feedd7",
-          200: "#fbd7ae",
-          500: "#db7b2d",
-          700: "#9a4a1d",
+          50: "#eff6ff",
+          100: "#dbeafe",
+          200: "#bfdbfe",
+          500: "#2563eb",
+          700: "#1d4ed8",
         },
         pine: {
-          500: "#167a6e",
-          700: "#0d4f48",
+          500: "#0ea5e9",
+          700: "#0369a1",
         },
       },
       boxShadow: {
-        card: "0 10px 30px rgba(125, 74, 26, 0.08)",
+        card: "0 10px 30px rgba(37, 99, 235, 0.08)",
       },
     },
   },
