@@ -70,6 +70,7 @@ type PersonNodeData = {
   alive: boolean;
   gender: Gender;
   familyRank?: number;
+  ageLabel?: string;
 };
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024;
@@ -226,6 +227,24 @@ function memberRankValue(member: Pick<Member, "familyRank">): number {
   return normalizeFamilyRank(member.familyRank) ?? Number.POSITIVE_INFINITY;
 }
 
+function ageLabelFromBirthDate(birthDate?: string): string | undefined {
+  if (!birthDate) return undefined;
+  const matched = /^(\d{4})-(\d{2})-(\d{2})$/.exec(birthDate);
+  if (!matched) return undefined;
+  const year = Number(matched[1]);
+  const month = Number(matched[2]);
+  const day = Number(matched[3]);
+  if (!Number.isFinite(year) || !Number.isFinite(month) || !Number.isFinite(day)) return undefined;
+
+  const today = new Date();
+  let age = today.getFullYear() - year;
+  const monthDelta = today.getMonth() + 1 - month;
+  const dayDelta = today.getDate() - day;
+  if (monthDelta < 0 || (monthDelta === 0 && dayDelta < 0)) age -= 1;
+  if (!Number.isFinite(age) || age < 0 || age > 130) return undefined;
+  return `${age}岁`;
+}
+
 function avatarRingClass(gender: Gender) {
   if (gender === "male") return "border-blue-300 bg-blue-50";
   if (gender === "female") return "border-pink-300 bg-pink-50";
@@ -234,12 +253,12 @@ function avatarRingClass(gender: Gender) {
 
 function PersonNode({ data }: NodeProps<PersonNodeData>) {
   const cardClass = !data.alive
-    ? "border-slate-300 bg-slate-100"
+    ? "border-slate-400 bg-slate-100"
     : data.isCenter
       ? "border-blue-500 bg-blue-50"
-      : "border-slate-200 bg-white";
+      : "border-slate-300 bg-white";
   const textClass = data.alive ? "text-slate-900" : "text-slate-700";
-  const subTextClass = data.alive ? "text-slate-600" : "text-slate-600";
+  const subTextClass = "text-slate-600";
 
   return (
     <div className={`w-[220px] max-w-[220px] rounded-2xl border px-3 py-2 shadow-card ${cardClass}`}>
@@ -248,7 +267,7 @@ function PersonNode({ data }: NodeProps<PersonNodeData>) {
         <img
           src={data.avatar}
           alt={data.name}
-          className={`h-10 w-10 rounded-full border object-cover ${avatarRingClass(data.gender)}`}
+          className={`h-10 w-10 rounded-full border-2 object-cover ${avatarRingClass(data.gender)}`}
         />
         <div className="min-w-0">
           <p className={`truncate text-sm font-semibold ${textClass}`}>
@@ -259,7 +278,10 @@ function PersonNode({ data }: NodeProps<PersonNodeData>) {
               </span>
             ) : null}
           </p>
-          <p className={`truncate text-xs ${subTextClass}`}>{data.alive ? "在世" : "已故"}</p>
+          <div className={`mt-0.5 flex flex-wrap items-center gap-1 text-xs ${subTextClass}`}>
+            {data.ageLabel ? <span className="rounded bg-slate-100 px-1 text-[11px]">{data.ageLabel}</span> : null}
+            {!data.alive ? <span className="rounded bg-slate-200 px-1 text-[11px] text-slate-700">已故</span> : null}
+          </div>
         </div>
       </div>
       <p
@@ -646,6 +668,7 @@ export default function App() {
             alive: member.alive,
             gender: member.gender,
             familyRank: member.familyRank,
+            ageLabel: ageLabelFromBirthDate(member.birthDate),
           },
         });
       });
@@ -670,6 +693,7 @@ export default function App() {
             alive: member.alive,
             gender: member.gender,
             familyRank: member.familyRank,
+            ageLabel: ageLabelFromBirthDate(member.birthDate),
           },
         });
       });
